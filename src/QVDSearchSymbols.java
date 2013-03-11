@@ -102,8 +102,8 @@ public class QVDSearchSymbols {
             for (int col=0; col<qvdReader.getNoOfFields(); col++) {
                 record[1] = qvdReader.getFieldName(col);
                 // loop every symbol
-                for (int sym=0; sym<qvdReader.getFieldNoOfSymbols(col); sym++) {
-                    record[2] = Integer.toString(sym);
+                for (long sym=0; sym<qvdReader.getFieldNoOfSymbols(col); sym++) {
+                    record[2] = Long.toString(sym);
                     record[3] = qvdReader.getFieldSymbol(col, sym);
                     if(pattern.matcher(record[3]).matches()){
                         csvWriter.writeNext(doQouting(record, paramDelimiter));

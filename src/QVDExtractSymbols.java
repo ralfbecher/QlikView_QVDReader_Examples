@@ -2,8 +2,13 @@
  * 
  * Example implementation of QVDReader:
  * 
- * It reads a given QVD file and stores the symbol data into CSV file.
+ * Program reads a given QVD file and stores the symbol data into CSV file.
  *
+ * Arguments:
+ *              args[0] = QVD files to read
+ *              args[1] = CSV file to write
+ *              args[2] = delimiter for CSV file
+ * 
  * @author Ralf Becher, (c) 2012 TIQ Solutions GmbH, Leipzig/Germany,
  * contact: ralf.becher@tiq-solutions.de
  * 
@@ -28,7 +33,7 @@ public class QVDExtractSymbols {
         FileOutputStream fos = null;
         String paramQVDfile = args[0];
         String paramCSVfile = args[1];
-        char cDelimiter = args[2].substring(0, 1).toCharArray()[0];
+        char paramDelimiter = args[2].substring(0, 1).toCharArray()[0];
         
         try {
             qvdReader = new QVDReader(paramQVDfile); 
@@ -48,7 +53,7 @@ public class QVDExtractSymbols {
             byte[] bom = new byte[] { (byte)0xEF, (byte)0xBB, (byte)0xBF };
             fos.write(bom);
             
-            csvWriter = new CSVWriter(new OutputStreamWriter(fos), cDelimiter, CSVParser.NULL_CHARACTER, CSVParser.NULL_CHARACTER);
+            csvWriter = new CSVWriter(new OutputStreamWriter(fos), paramDelimiter, CSVParser.NULL_CHARACTER, CSVParser.NULL_CHARACTER);
             csvWriter.writeNext(header);            
         }
         catch (IOException ex) {
@@ -61,10 +66,10 @@ public class QVDExtractSymbols {
         for (int col=0; col<qvdReader.getNoOfFields(); col++) {
             record[0] = qvdReader.getFieldName(col);
             // loop every symbol
-            for (int sym=0; sym<qvdReader.getFieldNoOfSymbols(col); sym++) {
-                record[1] = Integer.toString(sym);
+            for (long sym=0; sym<qvdReader.getFieldNoOfSymbols(col); sym++) {
+                record[1] = Long.toString(sym);
                 record[2] = qvdReader.getFieldSymbol(col, sym);
-                csvWriter.writeNext(doQouting(record, cDelimiter));
+                csvWriter.writeNext(doQouting(record, paramDelimiter));
                 recno++;
                 if (recno%2500==0) {
                     System.out.println("QVD symbol extraction: "+recno+" symbol records processed.");
